@@ -1,164 +1,89 @@
-# 💰 Expense Tracker App — by Hxni
-### Full Stack: React Native (Expo) + Node.js/Express + MySQL
+# Expense Tracker App — by Hxni
+
+![Hero Banner](./assets/banner.png)
+
+> A premium, high-performance mobile application for personal finance management. 
+> Built with a sleek dark-mode aesthetic and a robust full-stack architecture.
 
 ---
 
-## 📁 Project Structure
+## 📸 Preview
 
-```
-Expense Tracker App by Hxni/
-│
-├── backend/                          ← Node.js + Express REST API
-│   ├── server.js                     ← Entry point
-│   ├── package.json
-│   ├── .env.example                  ← Copy to .env and fill in values
-│   │
-│   ├── db/
-│   │   ├── connection.js             ← MySQL connection pool
-│   │   └── schema.sql                ← Table creation + seed data
-│   │
-│   ├── controllers/
-│   │   └── transactionController.js  ← All CRUD logic
-│   │
-│   └── routes/
-│       └── transactions.js           ← Express routes
-│
-└── frontend/                         ← React Native (Expo SDK 54)
-    ├── App.js                        ← Entry point + navigation
-    ├── package.json
-    │
-    ├── screens/
-    │   └── DashboardScreen.js
-    │
-    ├── components/
-    │   ├── BalanceCard.js
-    │   ├── SummaryCard.js
-    │   └── TransactionItem.js
-    │
-    ├── services/
-    │   └── api.js                    ← Axios client → points to backend
-    │
-    └── utils/
-        └── calculations.js           ← reduce helpers + formatters
-```
+<p align="center">
+  <img src="./assets/mockup.png" width="450" alt="Mobile Mockup" />
+</p>
 
 ---
 
-## 🗄️ Step 1 — Set Up MySQL
+## 🚀 Key Features
 
-1. Open **MySQL Workbench** or any MySQL client
-2. Run the schema file:
-   ```sql
-   SOURCE path/to/backend/db/schema.sql;
-   ```
-   This will:
-   - Create the `expense_tracker` database
-   - Create the `transactions` table
-   - Insert 15 sample transactions
+- **Intuitive Dashboard:** Get a bird's-eye view of your net balance, income, and expenses.
+- **Transaction History:** Seamlessly track spending with categorized lists and real-time updates.
+- **Smart Summary:** Automatic calculation of financial health across 15+ pre-defined categories.
+- **Cloud Connectivity:** Full-stack integration with a Node.js/Express backend and persistent storage.
+- **Aesthetic UI:** Designed with a premium "Glassmorphism" theme featuring gold accents (#FFD600).
 
 ---
 
-## ⚙️ Step 2 — Run the Backend
+## 🛠️ Tech Stack
 
-```bash
-cd backend
+| Layer      | Technology                                |
+|------------|-------------------------------------------|
+| **Mobile** | React Native · Expo SDK 54                |
+| **UI**     | Vanilla StyleSheet · Custom Components    |
+| **Network**| Axios · LocalTunnel                       |
+| **Backend**| Node.js · Express.js                      |
+| **Database**| MySQL 8 / Mock fallback                  |
+| **Security**| Helmet · CORS · Error Boundaries         |
 
-# 1. Install dependencies
-npm install
+---
 
-# 2. Create your .env file
-cp .env.example .env
-# Then open .env and fill in your MySQL password
+## 📂 Project Navigation
 
-# 3. Start the server
-npm run dev          # development (auto-restart)
-# or
-npm start            # production
-```
-
-Server runs at → `http://localhost:5000`
-
-### API Endpoints
-
-| Method | Endpoint                        | Description              |
-|--------|---------------------------------|--------------------------|
-| GET    | `/api/transactions`             | Get all transactions     |
-| GET    | `/api/transactions/:id`         | Get single transaction   |
-| GET    | `/api/transactions/summary`     | Get income/expense totals|
-| POST   | `/api/transactions`             | Create new transaction   |
-| PUT    | `/api/transactions/:id`         | Update a transaction     |
-| DELETE | `/api/transactions/:id`         | Delete a transaction     |
-| GET    | `/health`                       | Server health check      |
-
-### POST Body Example
-```json
-{
-  "title": "Monthly Salary",
-  "amount": 3500.00,
-  "type": "income",
-  "category": "salary",
-  "date": "2024-06-01",
-  "note": "June salary"
-}
+```text
+FullStackApp/
+├── assets/                 # Premium branding images
+├── backend/                # Server API (Node/Express)
+│   ├── db/                 # SQL schemas & MySQL connection
+│   ├── routes/             # API Endpoint definitions
+│   └── controllers/        # Business logic handler
+└── frontend/               # Mobile Client (Expo)
+    ├── components/         # Reusable UI elements
+    ├── screens/            # Full-page screen layouts
+    ├── services/           # API communication layer
+    └── utils/              # Calculation & formatting helpers
 ```
 
 ---
 
-## 📱 Step 3 — Run the Frontend
+## ⚙️ Quick Start
 
-```bash
-cd frontend
+### 1 — Backend Setup
+1. Enter the backend directory: `cd backend`
+2. Install dependencies: `npm install`
+3. Configure Environment: `cp .env.example .env` (fill in your DB credentials)
+4. Start Server: `npm start` (Runs on port 5000)
 
-# 1. Install dependencies
-npm install
-
-# 2. Update API base URL in services/api.js
-#    → If using a physical device, replace localhost with your machine's LAN IP
-#    → e.g. const BASE_URL = 'http://192.168.1.10:5000';
-
-# 3. Start Expo
-npx expo start
-```
-
-Scan the QR code with the **Expo Go** app on your phone, or press `a` for Android emulator / `i` for iOS simulator.
+### 2 — Frontend Setup
+1. Enter the frontend directory: `cd frontend`
+2. Install dependencies: `npm install`
+3. Update API Endpoint: In `services/api.js`, update the `BASE_URL` to your tunnel or local IP.
+4. Launch Mobile App: `npx expo start`
 
 ---
 
-## 🎨 Design System
+## 📐 Design Tokens
 
-| Token          | Value      |
-|----------------|------------|
-| Background     | `#030304`  |
-| Card Surface   | `#0F1115`  |
-| Text           | `#FFFFFF`  |
-| Muted Text     | `#94A3B8`  |
-| Income (Green) | `#22C55E`  |
-| Expense (Red)  | `#EF4444`  |
-| Balance (Gold) | `#FFD600`  |
+| Property    | Value      | Usage                  |
+|-------------|------------|------------------------|
+| **Primary** | `#FFD600`   | Accents, FAB, Balance  |
+| **Dark**    | `#030304`   | Main background        |
+| **Surface** | `#0F1115`   | Cards & Containers     |
+| **Success** | `#22C55E`   | Income markers         |
+| **Error**   | `#EF4444`   | Expense markers        |
 
 ---
 
-## 🔧 Environment Variables (backend/.env)
-
-```env
-PORT=5000
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=your_password_here
-DB_NAME=expense_tracker
-```
-
----
-
-## ✅ Tech Stack
-
-| Layer     | Technology                    |
-|-----------|-------------------------------|
-| Frontend  | React Native, Expo SDK 54     |
-| Navigation| React Navigation v6           |
-| HTTP      | Axios                         |
-| Backend   | Node.js, Express 4            |
-| Database  | MySQL 8 + mysql2 driver       |
-| Security  | Helmet, CORS                  |
-| Logging   | Morgan                        |
+<p align="center">
+  Made with 🖤 by <strong>Hxni</strong>
+</p>
