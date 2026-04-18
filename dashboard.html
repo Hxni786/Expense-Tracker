@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExpensePro — Professional Wealth Tracking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg: #030304;
+            --sidebar: #0F1115;
+            --surface: #16191E;
+            --accent: #FFD600;
+            --accent-soft: rgba(255, 214, 0, 0.1);
+            --text: #FFFFFF;
+            --text-muted: #94A3B8;
+            --income: #22C55E;
+            --expense: #EF4444;
+            --border: rgba(255, 255, 255, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ── Sidebar ─────────────────────────────────────────── */
+        aside {
+            width: 260px;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding: 0 10px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+        }
+
+        .logo h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        nav {
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-bottom: 5px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+        }
+
+        /* ── Main Content ────────────────────────────────────── */
+        main {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .header-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .title-block h1 {
+            font-size: 28px;
+            margin: 0 0 5px;
+        }
+
+        .title-block p {
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 214, 0, 0.3);
+        }
+
+        /* ── Grid Layout ─────────────────────────────────────── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 24px;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .card-label {
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .card-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .card-value.income { color: var(--income); }
+        .card-value.expense { color: var(--expense); }
+
+        .dashboard-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+
+        .history-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .history-list {
+            margin-top: 20px;
+        }
+
+        .tx-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .tx-item:last-child { border-bottom: none; }
+
+        .tx-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+        }
+
+        .tx-left { display: flex; align-items: center; gap: 15px; }
+
+        .tx-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tx-name h4 { margin: 0; font-size: 15px; }
+        .tx-name span { color: var(--text-muted); font-size: 12px; }
+
+        .tx-right { text-align: right; display: flex; align-items: center; gap: 20px; }
+        .tx-amount { font-weight: 700; font-size: 16px; }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 5px;
+            transition: var(--transition);
+        }
+
+        .btn-delete:hover { color: var(--expense); }
+
+        /* ── Charts ──────────────────────────────────────────── */
+        canvas {
+            max-height: 250px;
+        }
+
+        /* ── Modal ───────────────────────────────────────────── */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: var(--sidebar);
+            width: 450px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            padding: 40px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 22px; }
+
+        form { display: flex; flex-direction: column; gap: 15px; }
+
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        label { color: var(--text-muted); font-size: 13px; font-weight: 500; }
+
+        input, select {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 15px;
+            color: var(--text);
+            font-family: inherit;
+        }
+
+        input:focus { border-color: var(--accent); }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        /* ── Scrollbars ──────────────────────────────────────── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+        @media (max-width: 1000px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .dashboard-row { grid-template-columns: 1fr; }
+            aside { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="logo">
+            <div class="logo-icon"><i data-lucide="wallet"></i></div>
+            <h2>ExpensePro</h2>
+        </div>
+        <nav>
+            <a href="#" class="nav-item active"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+            <a href="#" class="nav-item"><i data-lucide="bar-chart-3"></i> Spending</a>
+            <a href="#" class="nav-item"><i data-lucide="calendar"></i> Planning</a>
+            <a href="#" class="nav-item"><i data-lucide="settings"></i> Settings</a>
+        </nav>
+        <div class="nav-item" style="margin-top: auto; opacity: 0.5;">
+            <i data-lucide="help-circle"></i> Support
+        </div>
+    </aside>
+
+    <main>
+        <div class="header-main">
+            <div class="title-block">
+                <h1>Financial Overview</h1>
+                <p id="date-now">Tracking your wealth for 2024</p>
+            </div>
+            <button class="btn-primary" onclick="toggleModal(true)">
+                <i data-lucide="plus"></i> New Transaction
+            </button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="card">
+                <div class="card-label"><i data-lucide="dollar-sign" size="16"></i> Total Balance</div>
+                <div id="balance" class="card-value">$0.00</div>
+            </div>
+            <div class="card">
+                <div class="card-label"><i data-lucide="trending-up" size="16"></i> Total Income</div>
+                <div id="total-income" class="card-value income">$0.00</div>
+            </div>
+            <div class="card">
+                <div class="card-label"><i data-lucide="trending-down" size="16"></i> Total Expenses</div>
+                <div id="total-expense" class="card-value expense">$0.00</div>
+            </div>
+        </div>
+
+        <div class="dashboard-row">
+            <div class="card history-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="margin: 0;">Recent Transactions</h3>
+                    <input type="text" placeholder="Search..." style="padding: 8px 12px; font-size: 13px; width: 200px;" oninput="filterHistory(this.value)">
+                </div>
+                <div id="history-list" class="history-list">
+                    <!-- Dynamic Content -->
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Spending Habits</h3>
+                <canvas id="categoryChart"></canvas>
+                <div style="margin-top: 30px;">
+                    <h3>Cash Flow</h3>
+                    <canvas id="flowChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal ────────────────────────────────────────────────── -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>New Transaction</h2>
+                <button class="btn-delete" onclick="toggleModal(false)"><i data-lucide="x"></i></button>
+            </div>
+            <form id="transaction-form" onsubmit="handleCreate(event)">
+                <div class="input-group">
+                    <label>Description</label>
+                    <input type="text" id="title" placeholder="Rent, Salary, Pizza..." required>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>Amount ($)</label>
+                        <input type="number" id="amount" step="0.01" value="0.00" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Type</label>
+                        <select id="type">
+                            <option value="expense">Expense</option>
+                            <option value="income">Income</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>Category</label>
+                        <select id="category">
+                            <option value="rent">Rent</option>
+                            <option value="salary">Salary</option>
+                            <option value="food">Food & Drink</option>
+                            <option value="transport">Transport</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="health">Health</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Date</label>
+                        <input type="date" id="date" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Note (Optional)</label>
+                    <input type="text" id="note" placeholder="Add a quick note...">
+                </div>
+                <button type="submit" class="btn-primary" style="justify-content: center; margin-top: 20px;">
+                    Save Transaction
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api/transactions';
+        let transactions = [];
+        let categoryChart, flowChart;
+
+        async function init() {
+            lucide.createIcons();
+            document.getElementById('date-now').textContent = `Tracking your wealth for ${new Date().getFullYear()}`;
+            document.getElementById('date').valueAsDate = new Date();
+            await fetchData();
+        }
+
+        async function fetchData() {
+            try {
+                const [txRes, sumRes, catRes] = await Promise.all([
+                    fetch(API_BASE),
+                    fetch(`${API_BASE}/summary`),
+                    fetch(`${API_BASE}/categories`)
+                ]);
+
+                if (!txRes.ok || !sumRes.ok || !catRes.ok) return;
+
+                const txData = await txRes.json();
+                const sumData = await sumRes.json();
+                const catData = await catRes.json();
+
+                transactions = txData.data;
+                updateUI(txData.data, sumData.data, catData.data);
+            } catch (err) { console.error(err); }
+        }
+
+        function updateUI(txs, summary, categories) {
+            // Update Stats
+            animateValue('balance', summary.balance);
+            animateValue('total-income', summary.totalIncome);
+            animateValue('total-expense', summary.totalExpense);
+
+            renderHistory(txs);
+            renderCharts(categories, summary);
+        }
+
+        function renderHistory(txs) {
+            const list = document.getElementById('history-list');
+            list.innerHTML = txs.map(tx => `
+                <div class="tx-item">
+                    <div class="tx-left">
+                        <div class="tx-icon"><i data-lucide="${tx.type === 'income' ? 'arrow-up-right' : 'arrow-down-left'}" style="color: ${tx.type === 'income' ? 'var(--income)' : 'var(--expense)'}"></i></div>
+                        <div class="tx-name">
+                            <h4>${tx.title}</h4>
+                            <span>${tx.category} • ${tx.date}</span>
+                        </div>
+                    </div>
+                    <div class="tx-right">
+                        <div class="tx-amount" style="color: ${tx.type === 'income' ? 'var(--income)' : 'var(--text)'}">
+                            ${tx.type === 'income' ? '+' : '-'}$${parseFloat(tx.amount).toLocaleString()}
+                        </div>
+                        <button class="btn-delete" onclick="handleDelete(${tx.id})"><i data-lucide="trash-2" size="16"></i></button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function renderCharts(categories, summary) {
+            const catCtx = document.getElementById('categoryChart').getContext('2d');
+            const flowCtx = document.getElementById('flowChart').getContext('2d');
+
+            if (categoryChart) categoryChart.destroy();
+            if (flowChart) flowChart.destroy();
+
+            categoryChart = new Chart(catCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: categories.map(c => c.category),
+                    datasets: [{
+                        data: categories.map(c => c.total),
+                        backgroundColor: ['#FFD600', '#6366F1', '#22C55E', '#EF4444', '#EC4899', '#8B5CF6', '#14B8A6'],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    plugins: { legend: { position: 'bottom', labels: { color: '#94A3B8', font: { family: 'Outfit' } } } },
+                    cutout: '70%'
+                }
+            });
+
+            flowChart = new Chart(flowCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Income', 'Expense'],
+                    datasets: [{
+                        data: [summary.totalIncome, summary.totalExpense],
+                        backgroundColor: ['rgba(34, 197, 94, 0.2)', 'rgba(239, 68, 68, 0.2)'],
+                        borderColor: ['#22C55E', '#EF4444'],
+                        borderWidth: 2,
+                        borderRadius: 10
+                    }]
+                },
+                options: {
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { display: false },
+                        x: { grid: { display: false }, ticks: { color: '#94A3B8' } }
+                    }
+                }
+            });
+        }
+
+        function animateValue(id, target) {
+            const el = document.getElementById(id);
+            const duration = 1000;
+            const start = parseFloat(el.textContent.replace(/[$,]/g, '')) || 0;
+            const startTime = performance.now();
+
+            function update(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const current = start + (target - start) * progress;
+                el.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(current);
+                if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+        }
+
+        function toggleModal(show) {
+            document.getElementById('modal').style.display = show ? 'flex' : 'none';
+        }
+
+        async function handleCreate(e) {
+            e.preventDefault();
+            const body = {
+                title: document.getElementById('title').value,
+                amount: parseFloat(document.getElementById('amount').value),
+                type: document.getElementById('type').value,
+                category: document.getElementById('category').value,
+                date: document.getElementById('date').value,
+                note: document.getElementById('note').value
+            };
+
+            await fetch(API_BASE, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            toggleModal(false);
+            e.target.reset();
+            fetchData();
+        }
+
+        async function handleDelete(id) {
+            if (!confirm('Are you sure you want to delete this transaction?')) return;
+            await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
+            fetchData();
+        }
+
+        function filterHistory(query) {
+            const filtered = transactions.filter(tx => 
+                tx.title.toLowerCase().includes(query.toLowerCase()) || 
+                tx.category.toLowerCase().includes(query.toLowerCase())
+            );
+            renderHistory(filtered);
+        }
+
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Expo directories
+.expo/
+dist/
+web-build/
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.test
+
+# Build artifacts
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS metadata
+thumbs.db
+desktop.ini

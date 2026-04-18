@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "Expense Tracker",
+    "slug": "expense-tracker-hxni",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
