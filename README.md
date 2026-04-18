@@ -2,88 +2,139 @@
 
 ![Hero Banner](./assets/banner.png)
 
-> A premium, high-performance mobile application for personal finance management. 
-> Built with a sleek dark-mode aesthetic and a robust full-stack architecture.
+> **A premium, high-performance financial management ecosystem.** 
+> Built with a cross-platform architecture, featuring a robust Node.js backend, React Native mobile client, and a real-time web dashboard.
 
 ---
 
-## 📸 Preview
+## 📸 Interface Preview
 
 <p align="center">
-  <img src="./assets/mockup.png" width="450" alt="Mobile Mockup" />
+  <img src="./assets/mockup.png" width="550" alt="Mobile Mockup" />
 </p>
+
+---
+
+## 🏗️ System Architecture
+
+The project follows a decoupled **Client-Server** architecture, ensuring scalability and separation of concerns.
+
+```mermaid
+graph TD
+    subgraph Clients
+        A[Mobile App - React Native]
+        B[Web Dashboard - Vanilla HTML/JS]
+    end
+    
+    subgraph Server_Layer [Backend Layer]
+        C[REST API - Node.js/Express]
+        D[Middleware - CORS/Parse/Log]
+    end
+    
+    subgraph Storage_Layer [Data Layer]
+        E[(MySQL Database)]
+        F[In-Memory Mock Fallback]
+    end
+
+    A <-->|JSON/Axios| C
+    B <-->|JSON/Fetch| C
+    C --- D
+    D <--> E
+    D <--> F
+```
+
+### Technical Highlights:
+- **MVC Pattern:** The backend implements a clean Model-View-Controller structure for manageable business logic.
+- **Dual Frontends:** Targeted experiences for both mobile (on-the-go tracking) and web (detailed analysis).
+- **Responsive Data Flow:** Real-time updates across interfaces using standardized RESTful communication.
 
 ---
 
 ## 🚀 Key Features
 
-- **Intuitive Dashboard:** Get a bird's-eye view of your net balance, income, and expenses.
-- **Transaction History:** Seamlessly track spending with categorized lists and real-time updates.
-- **Smart Summary:** Automatic calculation of financial health across 15+ pre-defined categories.
-- **Cloud Connectivity:** Full-stack integration with a Node.js/Express backend and persistent storage.
-- **Aesthetic UI:** Designed with a premium "Glassmorphism" theme featuring gold accents (#FFD600).
+- **💎 Elite UI/UX:** Designed with a "Glassmorphism" aesthetic, featuring gold accents (`#FFD600`) and a sleek dark mode.
+- **📊 Advanced Analytics:** Automatic category-based spending breakdown and cash flow visualization.
+- **⚡ Performance First:** Optimized for low-latency data fetching and smooth micro-animations.
+- **🛡️ Data Integrity:** Secure backend validation and standardized error handling.
+- **🔄 Hybrid Storage:** Persistent MySQL storage with an intelligent mock fallback for testing/demo environments.
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer      | Technology                                |
-|------------|-------------------------------------------|
-| **Mobile** | React Native · Expo SDK 54                |
-| **UI**     | Vanilla StyleSheet · Custom Components    |
-| **Network**| Axios · LocalTunnel                       |
-| **Backend**| Node.js · Express.js                      |
-| **Database**| MySQL 8 / Mock fallback                  |
-| **Security**| Helmet · CORS · Error Boundaries         |
+| Layer | Technology | Key Library |
+| :--- | :--- | :--- |
+| **Mobile** | React Native | Expo SDK 54, Axios |
+| **Web** | HTML5 / JavaScript | Chart.js, Lucide Icons |
+| **Backend** | Node.js | Express, Morgan, Dotenv |
+| **Database** | MySQL | mysql2/promise (Async/Await) |
+| **Design** | CSS3 / Stylesheet | Glassmorphism, CSS Variables |
 
 ---
 
-## 📂 Project Navigation
+## 📡 API Reference
+
+The backend provides a comprehensive RESTful API for all financial operations.
+
+### Transaction Endpoints
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/transactions` | Retrieve all transactions (Latest first) |
+| `POST` | `/api/transactions` | Create a new income/expense entry |
+| `GET` | `/api/transactions/:id` | Fetch detailed data for a specific entry |
+| `PUT` | `/api/transactions/:id` | Update an existing transaction |
+| `DELETE` | `/api/transactions/:id` | Remove a transaction from the ledger |
+
+### Analytics Endpoints
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/transactions/summary` | Get totals (Income, Expense, Balance) |
+| `GET` | `/api/transactions/categories` | Get spending breakdown by category |
+| `GET` | `/health` | Verify API status and version |
+
+---
+
+## 📂 Project Structure
 
 ```text
 FullStackApp/
-├── assets/                 # Premium branding images
-├── backend/                # Server API (Node/Express)
+├── assets/                 # Brand assets & mockups
+├── backend/                # Server-side logic (Node/Express)
+│   ├── controllers/        # Business logic & DB queries
 │   ├── db/                 # SQL schemas & MySQL connection
-│   ├── routes/             # API Endpoint definitions
-│   └── controllers/        # Business logic handler
-└── frontend/               # Mobile Client (Expo)
-    ├── components/         # Reusable UI elements
-    ├── screens/            # Full-page screen layouts
-    ├── services/           # API communication layer
-    └── utils/              # Calculation & formatting helpers
+│   ├── routes/             # API Endpoints
+│   └── server.js           # Entry point
+├── frontend/               # Mobile Client (Expo)
+│   ├── components/         # Reusable atomic UI
+│   ├── screens/            # Application views
+│   └── services/           # Network abstraction
+└── dashboard.html          # Web-based analytics dashboard
 ```
 
 ---
 
 ## ⚙️ Quick Start
 
-### 1 — Backend Setup
-1. Enter the backend directory: `cd backend`
-2. Install dependencies: `npm install`
-3. Configure Environment: `cp .env.example .env` (fill in your DB credentials)
-4. Start Server: `npm start` (Runs on port 5000)
+### 1. Backend Initialization
+```bash
+cd backend
+npm install
+cp .env.example .env  # Configure your DB credentials
+npm start             # Default: http://localhost:5000
+```
 
-### 2 — Frontend Setup
-1. Enter the frontend directory: `cd frontend`
-2. Install dependencies: `npm install`
-3. Update API Endpoint: In `services/api.js`, update the `BASE_URL` to your tunnel or local IP.
-4. Launch Mobile App: `npx expo start`
-
----
-
-## 📐 Design Tokens
-
-| Property    | Value      | Usage                  |
-|-------------|------------|------------------------|
-| **Primary** | `#FFD600`   | Accents, FAB, Balance  |
-| **Dark**    | `#030304`   | Main background        |
-| **Surface** | `#0F1115`   | Cards & Containers     |
-| **Success** | `#22C55E`   | Income markers         |
-| **Error**   | `#EF4444`   | Expense markers        |
+### 2. Frontend Execution
+```bash
+cd frontend
+npm install
+npx expo start        # Scan QR with Expo Go
+```
 
 ---
 
 <p align="center">
-  Made with 🖤 by <strong>Hxni</strong>
+  Made with 🖤 by <strong>Hxni</strong><br/>
+  <em>Transforming personal finance management.</em>
 </p>
